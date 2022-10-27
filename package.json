@@ -4,18 +4,26 @@
   "description": "Node.js Labs s. 5",
   "main": "index.js",
   "scripts": {
-    "start": "node index"
+    "start": "node index",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/f1ctashka/nodeJS-labs.git"
   },
-  "keywords": ["Node.js", "KPI"],
+  "keywords": [
+    "Node.js",
+    "KPI"
+  ],
   "author": "Victoria Ilchenko IK-01, Vadym Stroy IK-02",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/f1ctashka/nodeJS-labs/issues"
   },
   "homepage": "https://github.com/f1ctashka/nodeJS-labs#readme",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "2.7.1"
+  }
 }
