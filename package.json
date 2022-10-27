@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Node.js Labs s. 5",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index",
+    "start": "node src/index",
     "format:check": "prettier --check \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
     "format:fix": "prettier --write \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
     "prepare": "husky install"
