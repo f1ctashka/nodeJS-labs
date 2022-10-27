@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "node src/index",
-    "format:check": "prettier --check \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
+    "format": "prettier --check \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
     "format:fix": "prettier --write \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
+    "lint": "eslint --ignore-path .gitignore --cache \"src/**/*{.js,.ts}\"",
+    "lint:fix": "eslint --ignore-path .gitignore --cache \"src/**/*{.js,.ts}\" --fix",
     "prepare": "husky install"
   },
   "repository": {
@@ -26,7 +28,11 @@
   "homepage": "https://github.com/f1ctashka/nodeJS-labs#readme",
   "private": true,
   "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-sonarjs": "^0.16.0",
     "husky": "^8.0.1",
-    "prettier": "2.7.1"
+    "prettier": "^2.7.1"
   }
 }
