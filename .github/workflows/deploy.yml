@@ -3,7 +3,7 @@ name: Fly deploy
 on:
   workflow_run:
     workflows: ["Code quality checks"]
-    branches: ["main"]
+    # branches: ["main"]
     types:
       - completed
 
