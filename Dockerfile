@@ -18,6 +18,8 @@ ENV NODE_ENV production
 COPY . .
 
 RUN npm ci --ignore-scripts
+
+
 FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
