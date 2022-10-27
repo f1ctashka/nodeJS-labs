@@ -1,34 +1,13 @@
-FROM debian:bullseye as builder
-
-ARG NODE_VERSION=18
-
-RUN apt-get update; apt install -y curl
-RUN curl https://get.volta.sh | bash
-ENV VOLTA_HOME /root/.volta
-ENV PATH /root/.volta/bin:$PATH
-RUN volta install node@${NODE_VERSION}
-
-#######################################################################
-
-RUN mkdir /app
-WORKDIR /app
-
-ENV NODE_ENV production
-
-COPY . .
-
-RUN npm ci --ignore-scripts
+# Build
+FROM node:18-alpine as builder
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci --only=production
 
 
-FROM debian:bullseye
-
+# Run
+FROM node:18-alpine
 LABEL fly_launch_runtime="nodejs"
-
-COPY --from=builder /root/.volta /root/.volta
-COPY --from=builder /app /app
-
-WORKDIR /app
-ENV NODE_ENV production
-ENV PATH /root/.volta/bin:$PATH
-
-CMD [ "npm", "run", "start" ]
+COPY --from=builder /usr/src/app /usr/src/app/
+WORKDIR /usr/src/app
+CMD ["npm", "run", "start"]
