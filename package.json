@@ -2,11 +2,12 @@
   "name": "nodejs-labs",
   "version": "1.0.0",
   "description": "Node.js Labs s. 5",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node index",
-    "format:check": "prettier --check \"src/**/*.{js,ts}\" --ignore-path .gitignore",
-    "format:fix": "prettier --write \"src/**/*.{js,ts}\" --ignore-path .gitignore"
+    "format:check": "prettier --check \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
+    "format:fix": "prettier --write \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/f1ctashka/nodeJS-labs#readme",
   "private": true,
   "devDependencies": {
+    "husky": "^8.0.1",
     "prettier": "2.7.1"
   }
 }
