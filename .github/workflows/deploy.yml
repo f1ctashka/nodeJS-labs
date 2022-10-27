@@ -1,11 +1,8 @@
 name: Fly deploy
 
 on:
-  workflow_run:
-    workflows: ["Code quality checks"]
-    # branches: ["main"]
-    types:
-      - completed
+  push:
+    branches: ["main"]
 
   workflow_dispatch:
 
