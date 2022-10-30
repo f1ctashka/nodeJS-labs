@@ -7,8 +7,8 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
     'plugin:sonarjs/recommended',
+    'plugin:prettier/recommended',
   ],
   plugins: ['@typescript-eslint', 'sonarjs', 'prettier'],
   parserOptions: {
