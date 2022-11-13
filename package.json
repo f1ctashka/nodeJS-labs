@@ -5,9 +5,9 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "start": "ts-node src/main.ts",
-    "start:dev": "nodemon --watch \"src/**/*\" src/main.ts",
-    "start:prod": "node dist/main.js",
+    "start": "ts-node --experimental-specifier-resolution=node src/main.ts",
+    "start:dev": "nodemon --experimental-specifier-resolution=node --watch \"src/**/*\" src/main.ts",
+    "start:prod": "node --experimental-specifier-resolution=node dist/main.js",
     "build": "tsc",
     "format": "prettier --check \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
     "format:fix": "prettier --write \"src/**/*{.js,.ts}\" --ignore-path .gitignore",
