@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
+    "http-status": "^1.5.3",
     "reflect-metadata": "^0.1.13"
   },
   "jest": {
