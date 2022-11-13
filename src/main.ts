@@ -1,5 +1,4 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
 
 import { createServer, IncomingMessage, ServerResponse } from 'node:http';
 
