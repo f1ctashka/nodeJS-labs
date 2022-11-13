@@ -1,18 +1,15 @@
 import 'dotenv/config';
+import { App } from './core/app';
 
-import { createServer, IncomingMessage, ServerResponse } from 'node:http';
+async function bootstrap() {
+  const app = new App();
+  const PORT = process.env.PORT || '3000';
 
-const SAMOYED = 'https://i.imgur.com/EDA6NLa.jpg';
-const PORT = +(process.env.PORT || 3000);
+  await app.listen(PORT);
+  console.log(`App listening on port ${PORT}`);
 
-const listener = (request: IncomingMessage, response: ServerResponse) => {
-  response.setHeader('Content-Type', 'text/html');
-  response.writeHead(200);
+  process.on('SIGTERM', app.close);
+  process.on('SIGINT', app.close);
+}
 
-  response.end(`<img src="${SAMOYED}" alt="Samoyed" width="200" />`);
-};
-
-const server = createServer(listener);
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+void bootstrap();
