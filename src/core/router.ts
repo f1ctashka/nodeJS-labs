@@ -8,6 +8,13 @@ import {
   ROUTE_PATH_METADATA,
 } from './constants';
 import { normalizePath } from './utils/normalize-path.util';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { RequestInfo } from './request-info';
+import { RequestData } from './interfaces/request-data.interface';
+import { ContentType } from './enums/content-type.enum';
+import { HttpException } from './http-exception';
+import HttpStatus from 'http-status';
+import { mapResponse } from './utils/map-response.util';
 import { PathPattern } from './path-pattern';
 
 interface Route {
@@ -82,6 +89,96 @@ export class Router {
           method,
         },
       });
+    }
+  }
+
+  public async handleRequest(
+    request: IncomingMessage,
+    response: ServerResponse
+  ): Promise<void> {
+    try {
+      const { path = '/', method, body } = await RequestInfo.process(request);
+
+      for (const route of this.routes) {
+        if (method !== route.method) continue;
+        const { matches, params } = PathPattern.check(path, route.pattern);
+        if (!matches) continue;
+
+        const requestData: RequestData = {
+          params,
+          body,
+        };
+
+        const { controller, method: controllerMethod } = route.handler;
+
+        const responseBody = await (
+          controller[controllerMethod as keyof typeof controller] as (
+            requestData: RequestData
+          ) =>
+            | void
+            | string
+            | Record<string, unknown>
+            | Promise<void>
+            | Promise<string>
+            | Promise<Record<string, unknown>>
+        )(requestData);
+
+        const { responseText, headers } = this.formResponse(responseBody);
+
+        response.writeHead(
+          method === HttpMethod.Post ? HttpStatus.CREATED : HttpStatus.OK,
+          headers
+        );
+        if (responseText) return void response.end(responseText);
+
+        return void response.end();
+      }
+
+      this.handleNotFound(response);
+    } catch (error) {
+      this.handleError(error, response);
+    }
+  }
+
+  private sendError(exception: HttpException, response: ServerResponse) {
+    response
+      .writeHead(exception.statusCode, {
+        'content-type': ContentType.PlainText,
+      })
+      .end(exception.message);
+  }
+
+  private formResponse(
+    responseBody: string | number | void | Record<string, unknown>
+  ): {
+    headers: Record<string, string>;
+    responseText?: string;
+  } {
+    const headers: Record<string, string> = {};
+    const [contentType, responseText] = mapResponse(responseBody);
+    if (contentType) headers['content-type'] = contentType;
+
+    return { headers, responseText };
+  }
+
+  private handleNotFound(response: ServerResponse) {
+    return this.sendError(
+      new HttpException(HttpStatus.NOT_FOUND, 'Not Found'),
+      response
+    );
+  }
+
+  private handleError(error: unknown, response: ServerResponse) {
+    if (!(error instanceof HttpException)) {
+      return this.sendError(
+        new HttpException(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'Internal Server Error'
+        ),
+        response
+      );
+    } else {
+      return this.sendError(error, response);
     }
   }
 }
