@@ -21,10 +21,10 @@ export class UsersController {
   @Get(':id')
   public findOne(requestData: RequestData<{ id: string }>) {
     const id = +requestData.params.id;
-    if (Number.isNaN(id) || id < 1)
+    if (Number.isNaN(id) || id < 0)
       throw new HttpException(
         HttpStatus.BAD_REQUEST,
-        'Id should be a positive number'
+        'Id should be greater than or equal to 0'
       );
 
     const user = this.users.at(+id);
@@ -42,8 +42,11 @@ export class UsersController {
     if (!body.name) {
       throw new HttpException(HttpStatus.BAD_REQUEST, 'Name is required');
     }
-    if (Number.isNaN(+body.age)) {
-      throw new HttpException(HttpStatus.BAD_REQUEST, 'Age should be a number');
+    if (Number.isNaN(+body.age) || +body.age < 1 || +body.age > 100) {
+      throw new HttpException(
+        HttpStatus.BAD_REQUEST,
+        'Age should be a positive number between 1 and 100'
+      );
     }
 
     this.users.push(requestData.body);
