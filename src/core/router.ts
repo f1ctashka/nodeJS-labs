@@ -53,15 +53,21 @@ export class Router {
     return this;
   }
 
+  private isMethod(
+    controller: object,
+    method: string
+  ): method is keyof typeof controller {
+    return method in controller;
+  }
+
   private registerControllerRoutes(controller: new () => object) {
     const instance = new controller();
     const methods = Array.from(getClassMethodNames(instance));
 
     for (const method of methods) {
-      const isRoute = Reflect.getMetadata(
-        IS_ROUTE_METADATA,
-        instance[method as keyof typeof instance]
-      );
+      if (!this.isMethod(instance, method)) continue;
+
+      const isRoute = Reflect.getMetadata(IS_ROUTE_METADATA, instance[method]);
       if (!isRoute) continue;
 
       const controllerPrefix: string = Reflect.getMetadata(

@@ -14,15 +14,17 @@ export class RequestInfo {
   public body?: string | Record<string, unknown>;
   public path?: string;
   public query?: Record<string, string>;
+  public bodyCharset?: BufferEncoding;
 
   private constructor(private readonly request: IncomingMessage) {}
 
   public static async process(request: IncomingMessage): Promise<RequestInfo> {
     const instance = new RequestInfo(request);
 
-    const { method, contentType } = instance.validateHead();
+    const { method, contentType, bodyCharset } = instance.validateHead();
     instance.method = method;
     instance.contentType = contentType;
+    instance.bodyCharset = bodyCharset;
     instance.url = instance.parseUrl();
     instance.path = normalizePath(instance.url?.pathname || '');
     instance.query = Object.fromEntries(
@@ -35,14 +37,24 @@ export class RequestInfo {
 
   private validateHead() {
     const { method, headers } = this.request;
-    const contentType = headers['content-type']?.split(';').shift();
+    const contentTypeParts =
+      headers['content-type']?.split(/;\s?charset=/) || [];
+    const [contentType, bodyCharset] = contentTypeParts;
+
+    if (!Buffer.isEncoding(bodyCharset)) {
+      throw new HttpException(
+        HttpStatus.BAD_REQUEST,
+        `Unknown charset: ${bodyCharset}`
+      );
+    }
 
     this.validateMethod(method);
     this.validateContentType(contentType);
 
-    return { method, contentType } as {
+    return { method, contentType, bodyCharset } as {
       method: HttpMethod;
       contentType: ContentType;
+      bodyCharset: BufferEncoding;
     };
   }
 
@@ -98,7 +110,9 @@ export class RequestInfo {
       });
 
       this.request.on('end', () => {
-        const body = Buffer.concat(chunks).toString('utf-8');
+        const body = Buffer.concat(chunks).toString(
+          this.bodyCharset || 'utf-8'
+        );
         const { contentType } = this;
         if (!contentType) {
           return reject(
