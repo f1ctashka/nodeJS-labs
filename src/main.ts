@@ -1,19 +1,21 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
+import 'reflect-metadata';
+import 'dotenv/config';
 
-import { createServer, IncomingMessage, ServerResponse } from 'node:http';
+import { App } from './core/app';
+import { UsersController } from './users/users.controller';
+import { IndexController } from './index/index.controller';
 
-const SAMOYED = 'https://i.imgur.com/EDA6NLa.jpg';
-const PORT = +(process.env.PORT || 3000);
+async function bootstrap() {
+  const app = new App();
+  const PORT = process.env.PORT || '3000';
 
-const listener = (request: IncomingMessage, response: ServerResponse) => {
-  response.setHeader('Content-Type', 'text/html');
-  response.writeHead(200);
+  app.registerControllers([UsersController, IndexController]);
 
-  response.end(`<img src="${SAMOYED}" alt="Samoyed" width="200" />`);
-};
+  await app.listen(PORT);
+  console.log(`App listening on port ${PORT}`);
 
-const server = createServer(listener);
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+  process.on('SIGTERM', app.close);
+  process.on('SIGINT', app.close);
+}
+
+void bootstrap();

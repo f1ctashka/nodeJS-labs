@@ -15,7 +15,8 @@
     "forceConsistentCasingInFileNames": true,
 
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true
   },
   "include": ["src", ".eslintrc.cjs", ".prettierrc.cjs"],
   "ts-node": {
